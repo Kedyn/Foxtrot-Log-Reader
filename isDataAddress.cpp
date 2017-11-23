@@ -3,11 +3,11 @@
 #include "Tools.h"
 
 bool isDataAddress(const std::string& address) {
-	long address_number = std::stoul(address, nullptr, 16);
-	if ((address_number >= std::stoul(S_TO_D_INITIAL_ADRESS, nullptr, 16) &&
-		address_number <= std::stoul(S_TO_D_FINAL_ADRESS, nullptr, 16)) ||
-		(address_number >= std::stoul(D_TO_S_INITIAL_ADRESS, nullptr, 16) &&
-		address_number <= std::stoul(D_TO_S_FINAL_ADRESS, nullptr, 16))) {
+	int address_number = std::stoi(address, nullptr, 16);
+	if ((address_number >= std::stoi(S_TO_D_INITIAL_ADRESS, nullptr, 16) &&
+		address_number <= std::stoi(S_TO_D_FINAL_ADRESS, nullptr, 16)) ||
+		(address_number >= std::stoi(D_TO_S_INITIAL_ADRESS, nullptr, 16) &&
+		address_number <= std::stoi(D_TO_S_FINAL_ADRESS, nullptr, 16))) {
 		return true;
 	}
 	else {

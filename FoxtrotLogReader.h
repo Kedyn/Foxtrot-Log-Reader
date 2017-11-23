@@ -1,8 +1,6 @@
 #ifndef FOXTROT_LOG_READER_H
 #define FOXTROT_LOG_READER_H
 
-#include <fstream>
-#include <sstream>
 #include <string>
 
 class FoxtrotLogReader {
@@ -19,13 +17,9 @@ class FoxtrotLogReader {
 		void parseLog();
 
 	private:
-		bool isCommandAddress(const std::string& address) {
-			return (address == S_TO_D || address == D_TO_S);
-		}
+		bool isCommandAddress(const std::string& address) { return (address == S_TO_D || address == D_TO_S); }
 
-		bool isDataAddress(const std::string& address) {
-			return 
-		}
+		bool isDataAddress(const std::string& address);
 
 		std::string log_file;
 		std::string output_file;
