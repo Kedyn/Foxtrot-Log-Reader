@@ -17,7 +17,7 @@ std::string readOrWrite(const std::string &data) {
 int main() {
 	std::cout << "Line 2: " << readOrWrite(LINE_2) << " line\n";
 	std::cout << "Line 176: " << readOrWrite(LINE_176) << " line\n";
-	std::cout << "Line 195: " << readOrWrite(Line_195) << " line\n";
+	std::cout << "Line 195: " << readOrWrite(LINE_195) << " line\n";
 
 	return 0;
 }
