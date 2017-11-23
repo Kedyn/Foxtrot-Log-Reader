@@ -25,6 +25,7 @@ const int NUMBER_OF_TABS = 14;
 
 const int ADDRESS_TOKEN_NUMBER = 6;
 const int DATA_TOKEN_NUMBER    = 7;
+const int CYCLE_TOKEN_NUMBER   = 9;
 
 //Tokenizes data string into non-whitespace strings array
 std::string* tokenizeString(const std::string& data) {
