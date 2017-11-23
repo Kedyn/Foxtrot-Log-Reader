@@ -16,7 +16,7 @@ std::string hexStrReverse(const std::string &data) {
 
 int main() {
 	std::cout << "Line 2: " << hexStrReverse(LINE_2) << " line\n";
-	std::cout << "Line 196: " << hexStrReverse(Line_196) << " line\n";
+	std::cout << "Line 196: " << hexStrReverse(LINE_196) << " line\n";
 
 	return 0;
 }

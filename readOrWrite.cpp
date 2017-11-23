@@ -6,7 +6,7 @@ std::string readOrWrite(const std::string &data) {
 	std::string *data_tokens = tokenizeString(data);
 	std::string cycle = data_tokens[CYCLE_TOKEN_NUMBER];
 
-	if (cycle == "Rd" {
+	if (cycle == "Rd") {
 		return "Read";
 	}
 	else {
