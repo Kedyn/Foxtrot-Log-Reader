@@ -1,7 +1,3 @@
-/*
-This program was created assuming the line (data) passed to getCommandType() will have already
-determine that S_TO_D or D_TO_S hexadecimal codes have been detected in the line
-*/
 #include <iostream>
 #include <string>
 #include "Tools.h"
@@ -9,7 +5,7 @@ determine that S_TO_D or D_TO_S hexadecimal codes have been detected in the line
 std::string getCommandType(const std::string& data) {
 	std::string *data_tokens = tokenizeString(data);
 
-	if (data_tokens[ADDRESS_TOKEN_NUMBER] == S_TO_D) {
+	if ("0x"+data_tokens[ADDRESS_TOKEN_NUMBER] == S_TO_D) {
 		return S_TO_D;
 	}
 	else {

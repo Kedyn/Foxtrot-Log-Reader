@@ -1,18 +1,25 @@
-/*
-Here you can add tools that you think might be helpful for everyone.
-*/
 #ifndef TOOLS_H
 #define TOOLS_H
 
 #include <string>
 #include <regex>
 
-const std::string S_TO_D = "40000810";
-const std::string D_TO_S = "40000C18";
+const std::string S_TO_D                = "0x40000810";
+const std::string S_TO_D_INITIAL_ADRESS = "0x40000818";
+const std::string S_TO_D_FINAL_ADRESS   = "0x4000086B";
 
+
+const std::string D_TO_S = "0x40000C18";
+const std::string D_TO_S_INITIAL_ADRESS = "0x40000C20";
+const std::string D_TO_S_FINAL_ADRESS   = "0x40000C73";
+
+/*
+The following are test content extracted from test_data.log should be removed.
+*/
+const std::string LINE_2   = " -330002 3---        2.655us             -11.749s    Start       A32nMBLT         4062E690 FFFCFFF3FFF70007    D64    Wr       Data ----- ----   1111111";
 const std::string LINE_176 = " -329828 3---       13.140us             -11.749s   Single          A32nD         40000C18         00000000    D32    Wr       Data ----- ----   1111111";
 const std::string LINE_195 = " -329809 3---        1.598us             -11.749s   Single          A32nD         40000810         00000000    D32    Rd       Data ----- ----   1111111";
-
+const std::string LINE_196 = " -329808 3---        1.538us             -11.749s   Single          A32nD         40000810         0000000C    D32    Wr       Data ----- ----   1111111";
 
 const int NUMBER_OF_TABS = 14;
 
