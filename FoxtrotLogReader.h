@@ -23,9 +23,9 @@ class FoxtrotLogReader {
 
 		std::string getReadOrWrite(const std::string& cycle);
 
-		int getNumberOfWords(const std::string& hex);
-
 		std::string getCommandType(const std::string& address);
+
+		std::string fieldNameAndDescription(int word, std::string data);
 
 		std::string log_file;
 		std::string output_file;

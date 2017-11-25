@@ -4,29 +4,6 @@
 #include <string>
 #include <regex>
 
-const std::string S_TO_D                = "0x40000810";
-const std::string S_TO_D_INITIAL_ADRESS = "0x40000818";
-const std::string S_TO_D_FINAL_ADRESS   = "0x4000086B";
-
-
-const std::string D_TO_S = "0x40000C18";
-const std::string D_TO_S_INITIAL_ADRESS = "0x40000C20";
-const std::string D_TO_S_FINAL_ADRESS   = "0x40000C73";
-
-/*
-The following are test content extracted from test_data.log should be removed.
-*/
-const std::string LINE_2   = " -330002 3---        2.655us             -11.749s    Start       A32nMBLT         4062E690 FFFCFFF3FFF70007    D64    Wr       Data ----- ----   1111111";
-const std::string LINE_176 = " -329828 3---       13.140us             -11.749s   Single          A32nD         40000C18         00000000    D32    Wr       Data ----- ----   1111111";
-const std::string LINE_195 = " -329809 3---        1.598us             -11.749s   Single          A32nD         40000810         00000000    D32    Rd       Data ----- ----   1111111";
-const std::string LINE_196 = " -329808 3---        1.538us             -11.749s   Single          A32nD         40000810         0000000C    D32    Wr       Data ----- ----   1111111";
-
-const int NUMBER_OF_TABS = 14;
-
-const int ADDRESS_TOKEN_NUMBER = 6;
-const int DATA_TOKEN_NUMBER    = 7;
-const int CYCLE_TOKEN_NUMBER   = 9;
-
 //Tokenizes data string into non-whitespace strings array
 std::string* tokenizeString(const std::string& data) {
 	std::regex regex("(\\S+)");
@@ -43,6 +20,36 @@ std::string* tokenizeString(const std::string& data) {
 		result[result_index] = match_str;
 	}
 
+	return result;
+}
+
+std::string hexCharToBinary(char hex) {
+	switch(hex) {
+		case '0': return "0000";
+		case '1': return "0001";
+		case '2': return "0010";
+		case '3': return "0011";
+		case '4': return "0100";
+		case '5': return "0101";
+		case '6': return "0110";
+		case '7': return "0111";
+		case '8': return "1000";
+		case '9': return "1001";
+		case 'A': return "1010";
+		case 'B': return "1011";
+		case 'C': return "1100";
+		case 'D': return "1101";
+		case 'E': return "1110";
+		case 'F': return "1111";
+		default: return "";
+	}
+}
+
+std::string hexToBinary(const std::string& hex) {
+	std::string result;
+	for (std::size_t i = 0; i < hex.length(); ++i) {
+		result += hexCharToBinary(hex[i]);
+	}
 	return result;
 }
 
