@@ -13,7 +13,7 @@ std::string* tokenizeString(const std::string& data) {
 
 	std::string *result = new std::string[std::distance(beginning, end)];
 
-	std::size_t result_index = 0;
+	size_t result_index = 0;
 	for (std::sregex_iterator i = beginning; i != end; ++i, ++result_index) {
 		std::smatch match = *i;
 		std::string match_str = match.str();
@@ -47,8 +47,17 @@ std::string hexCharToBinary(char hex) {
 
 std::string hexToBinary(const std::string& hex) {
 	std::string result;
-	for (std::size_t i = 0; i < hex.length(); ++i) {
+	for (size_t i = 0; i < hex.length(); ++i) {
 		result += hexCharToBinary(hex[i]);
+	}
+	return result;
+}
+
+std::string hexStringReverse(const std::string& hex) {
+	std::string result = "";
+	size_t len = hex.length();
+	for (size_t i = 4; i <= len; i += 4) {
+		result += hex.substr(len - i,4);
 	}
 	return result;
 }

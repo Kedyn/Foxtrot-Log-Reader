@@ -103,11 +103,13 @@ std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data
 void FoxtrotLogReader::parseLog() {
 	std::ifstream log_contents(log_file);
 	std::string line;
-	//bool reverse_data = false;
 	int l = 1;
-	int bytes = 0;
 	int word = 0;
+	int words = 0;
 	int command = 1;
+	bool reverse_data = false;
+	bool check_order = false;
+	std::string smallest_address = "0x00000000";
 
 	while (std::getline(log_contents, line) && command < 11) {
 		std::string *data_tokens = tokenizeString(line);
@@ -117,23 +119,48 @@ void FoxtrotLogReader::parseLog() {
 		if (isCommandAddress(address)) {
 			std::string cycle = data_tokens[CYCLE_TOKEN_NUMBER];
 			std::string data = data_tokens[DATA_TOKEN_NUMBER];
-			bytes = std::stoi(data, nullptr, 16);
 			word = 0;
+			words = std::stoi(data, nullptr, 16) / 2;
 
-			std::cout << "\n";
-			std::cout << "Line " << l << ": " << getReadOrWrite(cycle) << " " << getCommandType(address) << " command: " << bytes / 2 << " words\n";
+			std::cout << "Line " << l << ": " << getReadOrWrite(cycle) << " " << getCommandType(address) << " command: " << words << " words\n";
 			command++;
+			if (words) {
+				check_order = true;
+				smallest_address = (address == S_TO_D) ? S_TO_D_INITIAL_ADRESS : D_TO_S_INITIAL_ADRESS;
+				reverse_data = false;
+			}
+			else {
+				std::cout << "\n";
+			}
 		}
-		else if (bytes && isDataAddress(address)) {
+		else if (words && isDataAddress(address)) {
+			if (check_order) {
+				check_order = false;
+				if (address != smallest_address) {
+					reverse_data = true;
+					word = words;
+				}
+			}
 			std::string data = data_tokens[DATA_TOKEN_NUMBER];
+			if (reverse_data) {
+				data = hexStringReverse(data);
+			}
 			for (size_t i = 0; i <  data.length(); i += 4) {
 				std::string word_info = fieldNameAndDescription(word, hexToBinary(data.substr(i, 4)));
 				if (word_info != "") {
 					std::cout << "Line " << l << ": " << word_info;
 				}
-				++word;
+				if (reverse_data) {
+					--word;
+				}
+				else {
+					++word;
+				}
+				words--;
 			}
-			--bytes;
+			if (!words) {
+				std::cout << "\n";
+			}
 		}
 		++l;
 	}
