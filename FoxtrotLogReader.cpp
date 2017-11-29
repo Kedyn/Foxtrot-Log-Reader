@@ -32,8 +32,9 @@ std::string FoxtrotLogReader::getCommandType(const std::string& address) {
 
 std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data) {
 	int data_value;
+	//std::cout << "Word " << word << '\n';
 	switch(word) {
-		case 0: 
+		case 0:
 			data_value = std::stoi(data.substr(1,2), nullptr, 2);
 			switch(data_value) {
 				case 0: return "Word 0: Rec_Ctrl = 0 (no recording)\n";
@@ -44,9 +45,9 @@ std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data
 		case 1:
 			data_value = std::stoi(data.substr(0,3), nullptr, 2);
 			switch(data_value) {
-				case 4: return "Word 1: Cmd_Type = 0 (Type A)\n";
-				case 5: return "Word 1: Cmd_Type = 2 (Type B)\n";
-				case 6: return "Word 1: Cmd_Type = 3 (Type C)\n";
+				case 4: return "Word 1: Cmd_Type = 4 (Type A)\n";
+				case 5: return "Word 1: Cmd_Type = 5 (Type B)\n";
+				case 6: return "Word 1: Cmd_Type = 6 (Type C)\n";
 				default: return "Word 1: Cmd_Type = "+std::to_string(data_value)+" (unknown)\n";
 			}
 		case 4:
@@ -73,7 +74,7 @@ std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data
 				default: return "Word 22: Direction = "+std::to_string(data_value)+" (unknown)\n";
 			}
 		case 32:
-			return "Word 32: Num_Samples = "+std::to_string(std::stoi(data.substr(1,14), nullptr, 2))+"\n";
+			return "Word 32: Num_Samples = "+std::to_string(std::stoi(data.substr(1,15), nullptr, 2))+"\n";
 		case 37:
 			data_value = std::stoi(data.substr(0,1), nullptr, 2);
 			switch(data_value) {
@@ -138,7 +139,7 @@ void FoxtrotLogReader::parseLog() {
 				check_order = false;
 				if (address != smallest_address) {
 					reverse_data = true;
-					word = words;
+					word = words - 1;
 				}
 			}
 			std::string data = data_tokens[DATA_TOKEN_NUMBER];

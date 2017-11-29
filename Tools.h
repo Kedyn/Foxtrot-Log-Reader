@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include <string>
+#include <iostream>
 #include <regex>
 
 //Tokenizes data string into non-whitespace strings array
