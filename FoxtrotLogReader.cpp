@@ -108,11 +108,12 @@ void FoxtrotLogReader::parseLog() {
 	int word = 0;
 	int words = 0;
 	int command = 1;
+	double time_measure = 0;
 	bool reverse_data = false;
 	bool check_order = false;
 	std::string smallest_address = "0x00000000";
 
-	while (std::getline(log_contents, line) && command < 11) {
+	while (std::getline(log_contents, line) && command < 12) {
 		std::string *data_tokens = tokenizeString(line);
 
 		std::string address = "0x"+data_tokens[ADDRESS_TOKEN_NUMBER];
@@ -162,6 +163,10 @@ void FoxtrotLogReader::parseLog() {
 			if (!words) {
 				std::cout << "\n";
 			}
+			std::string time = data_tokens[TIME_TOKEN_NUMBER];
+			std::string type_of_time = time.substr(time.length() - 2, 2);
+			time_measure = std::stod (time.substr(0, time.length() - 2)); 
+			// std::cout << time << "\n" << time_measure << type_of_time << "\n";
 		}
 		++l;
 	}
