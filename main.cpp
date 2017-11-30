@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	}
 		
 	else if (argc == 2) {
-		FoxtrotLogReader parser(argv[1], "notTruelyRequired.txt");
+		FoxtrotLogReader parser(argv[1], "FoxtrotLogOutput.txt");
 		parser.parseLog();
 		return 0;
 	}

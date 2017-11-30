@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 #include "definitions.h"
 #include "Tools.h"
 #include "FoxtrotLogReader.h"
@@ -103,20 +105,33 @@ std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data
 
 void FoxtrotLogReader::parseLog() {
 	std::ifstream log_contents(log_file);
+	std::ofstream log_output(output_file);
 	std::string line;
 	int l = 1;
 	int word = 0;
 	int words = 0;
 	int command = 1;
+	int category = 0;
 	double time_measure = 0;
 	bool reverse_data = false;
 	bool check_order = false;
+	bool data_check = false;
 	std::string smallest_address = "0x00000000";
+	std::string data_size = "";
+	DataRate data(0, 0);
 
-	while (std::getline(log_contents, line) && command < 12) {
+	while (std::getline(log_contents, line) ) {
 		std::string *data_tokens = tokenizeString(line);
 
 		std::string address = "0x"+data_tokens[ADDRESS_TOKEN_NUMBER];
+
+		if (data_check) {
+			std::string time = data_tokens[TIME_TOKEN_NUMBER];
+			std::string type_of_time = time.substr(time.length() - 2, 2);
+			time_measure = std::stod (time.substr(0, time.length() - 2)); 
+			data.inputData(category, time_measure, type_of_time, data_size);
+			data_check = false;
+		}
 
 		if (isCommandAddress(address)) {
 			std::string cycle = data_tokens[CYCLE_TOKEN_NUMBER];
@@ -124,7 +139,7 @@ void FoxtrotLogReader::parseLog() {
 			word = 0;
 			words = std::stoi(data, nullptr, 16) / 2;
 
-			std::cout << "Line " << l << ": " << getReadOrWrite(cycle) << " " << getCommandType(address) << " command: " << words << " words\n";
+			log_output << "Line " << l << ": " << getReadOrWrite(cycle) << " " << getCommandType(address) << " command: " << words << " words\n";
 			command++;
 			if (words) {
 				check_order = true;
@@ -132,8 +147,12 @@ void FoxtrotLogReader::parseLog() {
 				reverse_data = false;
 			}
 			else {
-				std::cout << "\n";
+				log_output << "\n";
 			}
+			data_check = true;
+			(cycle == "Rd") ? category = 0 : category = 1;
+			(address == S_TO_D) ? category += 2 : category += 4;
+			
 		}
 		else if (words && isDataAddress(address)) {
 			if (check_order) {
@@ -150,7 +169,7 @@ void FoxtrotLogReader::parseLog() {
 			for (size_t i = 0; i <  data.length(); i += 4) {
 				std::string word_info = fieldNameAndDescription(word, hexToBinary(data.substr(i, 4)));
 				if (word_info != "") {
-					std::cout << "Line " << l << ": " << word_info;
+					log_output << "Line " << l << ": " << word_info;
 				}
 				if (reverse_data) {
 					--word;
@@ -161,14 +180,89 @@ void FoxtrotLogReader::parseLog() {
 				words--;
 			}
 			if (!words) {
-				std::cout << "\n";
+				log_output << "\n";
 			}
-			std::string time = data_tokens[TIME_TOKEN_NUMBER];
-			std::string type_of_time = time.substr(time.length() - 2, 2);
-			time_measure = std::stod (time.substr(0, time.length() - 2)); 
-			// std::cout << time << "\n" << time_measure << type_of_time << "\n";
+			
+			data_check = true;
 		}
 		++l;
+		
+		if (data_check) {
+			data_size = data_tokens[SIZE_TOKEN_NUMBER];
+		}
 	}
+	data.print(log_output);
 	log_contents.close();
+	log_output.close();
+}
+
+void DataRate::inputData(int category, double time_measure, std::string type_of_time, std::string data_size) {
+	switch(category) {
+		case 2:
+			r_s_to_d_time_value += timeConversion(time_measure, type_of_time);
+			r_s_to_d_data_value += dataConversion(data_size);
+			break;
+		case 3:
+			w_s_to_d_time_value += timeConversion(time_measure, type_of_time);
+			w_s_to_d_data_value += dataConversion(data_size);
+			break;
+		case 4:
+			r_d_to_s_time_value += timeConversion(time_measure, type_of_time);
+			r_d_to_s_data_value += dataConversion(data_size);
+			break;
+		case 5:
+			w_d_to_s_time_value += timeConversion(time_measure, type_of_time);
+			w_d_to_s_data_value += dataConversion(data_size);
+			break;
+	}
+}
+
+long DataRate::dataConversion(std::string data_size) {
+	return (data_size == "D32") ? 32 : 64;
+}
+
+double DataRate::timeConversion(double time_measure, std::string type_of_time) {
+	if (type_of_time == "ms") {
+		return (time_measure / 1000);
+	}
+	else if (type_of_time == "us") {
+		return (time_measure / 1000000);
+	}
+	else if (type_of_time == "ns") {
+		return (time_measure / 1000000000);
+	}
+}
+
+void DataRate::print(std::ofstream &log_output) {
+	log_output << "Read S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(r_s_to_d_data_value, r_s_to_d_time_value) << "\n";
+	log_output << "Read D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(r_d_to_s_data_value, r_d_to_s_time_value) << "\n";
+	log_output << "Write S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(w_s_to_d_data_value, w_s_to_d_time_value) << "\n";
+	log_output << "Write D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(w_d_to_s_data_value, w_d_to_s_time_value) << "\n";
+}
+
+std::string DataRate::dataRateConversion(long data_value, double time_value) {
+	if (time_value == 0) {
+		return "N/A";
+	}
+
+	double data_rate = (data_value / time_value);
+	int byte_type = 0;
+	std::stringstream data_number;
+
+	while (data_rate > 1000) {
+		data_rate = (data_rate / 1000);
+		byte_type++;
+	}
+
+	data_number << std::fixed << std::setprecision(2) << data_rate;
+
+	switch(byte_type) {
+		case 0: return data_number.str()+" Bits/sec";
+		case 1: return data_number.str()+" Kilobits/sec";
+		case 2: return data_number.str()+" Megabits/sec";
+		case 3: return data_number.str()+" Gigabits/sec";
+		case 4: return data_number.str()+" Terabits/sec";
+		default: return "N/A";
+	}
+		
 }
