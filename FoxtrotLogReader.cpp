@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 #include "definitions.h"
 #include "Tools.h"
 #include "FoxtrotLogReader.h"
@@ -31,10 +32,8 @@ std::string FoxtrotLogReader::getCommandType(const std::string& address) {
 	return (address == S_TO_D) ? "S-to-D" : "D-to-S";
 }
 
-
 std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data) {
 	int data_value;
-	//std::cout << "Word " << word << '\n';
 	switch(word) {
 		case 0:
 			data_value = std::stoi(data.substr(1,2), nullptr, 2);
@@ -120,8 +119,8 @@ void FoxtrotLogReader::parseLog() {
 	std::string data_size = "";
 	DataRate data(0, 0);
 
-	while (std::getline(log_contents, line) ) {
-		std::string *data_tokens = tokenizeString(line);
+	while (std::getline(log_contents, line)) {
+		std::vector<std::string> data_tokens = tokenizeString(line);
 
 		std::string address = "0x"+data_tokens[ADDRESS_TOKEN_NUMBER];
 
@@ -186,7 +185,6 @@ void FoxtrotLogReader::parseLog() {
 			data_check = true;
 		}
 		++l;
-		
 		if (data_check) {
 			data_size = data_tokens[SIZE_TOKEN_NUMBER];
 		}

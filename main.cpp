@@ -11,9 +11,9 @@ int main(int argc, char* argv[]) {
 		usage(argv[0]);
 		return 1;
 	}
-		
+
 	else if (argc == 2) {
-		FoxtrotLogReader parser(argv[1], "FoxtrotLogOutput.txt");
+		FoxtrotLogReader parser(argv[1], "FoxtrotLogOutput.log");
 		parser.parseLog();
 		return 0;
 	}

@@ -3,25 +3,19 @@
 
 #include <string>
 #include <iostream>
-#include <regex>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <iterator>
 
 //Tokenizes data string into non-whitespace strings array
-std::string* tokenizeString(const std::string& data) {
-	std::regex regex("(\\S+)");
+std::vector<std::string> tokenizeString(const std::string& data) {
+	std::istringstream buf(data);
+	std::istream_iterator<std::string> beg(buf), end;
 
-	std::sregex_iterator beginning(data.begin(), data.end(), regex);
-	std::sregex_iterator end;
+	std::vector<std::string> tokens(beg, end);
 
-	std::string *result = new std::string[std::distance(beginning, end)];
-
-	size_t result_index = 0;
-	for (std::sregex_iterator i = beginning; i != end; ++i, ++result_index) {
-		std::smatch match = *i;
-		std::string match_str = match.str();
-		result[result_index] = match_str;
-	}
-
-	return result;
+	return tokens;
 }
 
 std::string hexCharToBinary(char hex) {
