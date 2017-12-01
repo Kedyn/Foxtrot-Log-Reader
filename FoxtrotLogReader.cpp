@@ -7,6 +7,11 @@
 #include "Tools.h"
 #include "FoxtrotLogReader.h"
 
+void FoxtrotLogReader::setLogFile(const std::string& file) { log_file = file; }
+std::string FoxtrotLogReader::getLogFile() { return log_file; }
+void FoxtrotLogReader::setOutputFile(const std::string& file) { output_file = file; }
+std::string FoxtrotLogReader::getOutputFile() { return output_file; }
+
 bool FoxtrotLogReader::isCommandAddress(const std::string& address) {
 	return (address == S_TO_D || address == D_TO_S);
 }
@@ -105,16 +110,15 @@ std::string FoxtrotLogReader::fieldNameAndDescription(int word, std::string data
 void FoxtrotLogReader::parseLog() {
 	std::ifstream log_contents(log_file);
 	std::ofstream log_output(output_file);
-	std::string line;
 	int l = 1;
 	int word = 0;
 	int words = 0;
-	int command = 1;
 	int category = 0;
 	double time_measure = 0;
 	bool reverse_data = false;
 	bool check_order = false;
 	bool data_check = false;
+	std::string line;
 	std::string smallest_address = "0x00000000";
 	std::string data_size = "";
 	DataRate data(0, 0);
@@ -139,7 +143,6 @@ void FoxtrotLogReader::parseLog() {
 			words = std::stoi(data, nullptr, 16) / 2;
 
 			log_output << "Line " << l << ": " << getReadOrWrite(cycle) << " " << getCommandType(address) << " command: " << words << " words\n";
-			command++;
 			if (words) {
 				check_order = true;
 				smallest_address = (address == S_TO_D) ? S_TO_D_INITIAL_ADRESS : D_TO_S_INITIAL_ADRESS;
@@ -215,6 +218,13 @@ void DataRate::inputData(int category, double time_measure, std::string type_of_
 	}
 }
 
+void DataRate::print(std::ofstream &log_output) {
+	log_output << "Read S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(r_s_to_d_data_value, r_s_to_d_time_value) << "\n";
+	log_output << "Read D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(r_d_to_s_data_value, r_d_to_s_time_value) << "\n";
+	log_output << "Write S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(w_s_to_d_data_value, w_s_to_d_time_value) << "\n";
+	log_output << "Write D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(w_d_to_s_data_value, w_d_to_s_time_value) << "\n";
+}
+
 long DataRate::dataConversion(std::string data_size) {
 	return (data_size == "D32") ? 32 : 64;
 }
@@ -229,13 +239,6 @@ double DataRate::timeConversion(double time_measure, std::string type_of_time) {
 	else if (type_of_time == "ns") {
 		return (time_measure / 1000000000);
 	}
-}
-
-void DataRate::print(std::ofstream &log_output) {
-	log_output << "Read S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(r_s_to_d_data_value, r_s_to_d_time_value) << "\n";
-	log_output << "Read D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(r_d_to_s_data_value, r_d_to_s_time_value) << "\n";
-	log_output << "Write S-to-D: " << std::fixed << std::setprecision(2) << dataRateConversion(w_s_to_d_data_value, w_s_to_d_time_value) << "\n";
-	log_output << "Write D-to-S: " << std::fixed << std::setprecision(2) << dataRateConversion(w_d_to_s_data_value, w_d_to_s_time_value) << "\n";
 }
 
 std::string DataRate::dataRateConversion(long data_value, double time_value) {
