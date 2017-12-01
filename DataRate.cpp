@@ -1,4 +1,4 @@
-#include <ofstream>
+#include <fstream>
 #include <iomanip>
 #include <sstream>
 #include "DataRate.h"
